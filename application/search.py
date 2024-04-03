@@ -1,5 +1,8 @@
+from flask import Flask, request, jsonify, Response
+from time import sleep
+from flask_cors import CORS
+import json
 from utils import load_vectorstore
-import os
 from langchain_openai import ChatOpenAI
 from langchain import hub
 from langchain_core.output_parsers import StrOutputParser
@@ -9,29 +12,33 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
-def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
-
+app = Flask(__name__)
+CORS(app, supports_credentials=True)
 
 vectorstore = load_vectorstore(
-    vectorstore_path="./book_vectorstore", index_name="products")
+    vectorstore_path="../book_vectorstore", index_name="products")
 
 retriever = vectorstore.as_retriever(
     search_type="similarity", search_kwargs={"k": 6})
 
 llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
 
-template = """You are a chatbot for a jewish bookstore. Your job is to make book and seforim recommendations bases on available data such as season, upcoming holiday or yom tov, or topic specified by the user in the question. Based on the available data, recommend books that align with these interests. Provide a brief summarized description of each recommendation, including its relevance to the user's interests.
+template = """You are a chatbot for a jewish bookstore. Your job is to make book and seforim recommendations based on available data such as season, upcoming holiday or yom tov, or topic specified by the user in the question. Based on the available data, recommend books that align with these interests. Provide a brief summarized description of each recommendation, including its relevance to the user's interests.
 
-If possible, give multiple options and include books from different genres and ask for user feedback in narrowing down the search. If there are multiple options, number each one. Keep the output concise and only include relevant information such as the title, author price and a very brief summarized description. You can also show a single sentence with reasoning of why a choice is relevant. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+If possible, give multiple options and include books from different genres and ask for user feedback in narrowing down the search. If there are multiple options, number each one. Keep the output concise and only include relevant information such as the title, author, price, and a very brief summarized description. You can also show a single sentence with reasoning of why a choice is relevant. If you don't know the answer, just say that you don't know, don't try to make up an answer.
 {context}
 
 Question: {question}
 
 Helpful Answer:
 """
+
 custom_rag_prompt = PromptTemplate.from_template(template)
+
+
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
+
 
 rag_chain = (
     {"context": retriever | format_docs, "question": RunnablePassthrough()}
@@ -40,5 +47,25 @@ rag_chain = (
     | StrOutputParser()
 )
 
-for chunk in rag_chain.stream("Do you have the Rabbi kelmer's biography?"):
-    print(chunk, end="", flush=True)
+
+def generate_recommendations(question):
+    for chunk in rag_chain.stream(question):
+        yield f"data: {json.dumps({'text': chunk})}\n\n"
+
+        print(chunk)
+
+
+@app.route('/recommend', methods=['POST'])
+def recommend():
+    data = request.get_json()
+    question = data.get('question', '')
+    print(question)
+
+    if not question:
+        return {"error": "Question is required."}, 400
+
+    return Response(generate_recommendations(question), content_type='text/event-stream')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
