@@ -24,7 +24,7 @@ llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
 
 template = """You are a chatbot for a jewish bookstore. Your job is to make book and seforim recommendations bases on available data such as season, upcoming holiday or yom tov, or topic specified by the user in the question. Based on the available data, recommend books that align with these interests. Provide a brief summarized description of each recommendation, including its relevance to the user's interests.
 
-If possible, include books from different genres and ask for user feedback in narrowing down the search. Keep the output concise and only include relevant information such as the title, author price and a very brief summarized description. You can also show a single sentence with reasoning of why a choice is relevant. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+If possible, give multiple options and include books from different genres and ask for user feedback in narrowing down the search. If there are multiple options, number each one. Keep the output concise and only include relevant information such as the title, author price and a very brief summarized description. You can also show a single sentence with reasoning of why a choice is relevant. If you don't know the answer, just say that you don't know, don't try to make up an answer.
 {context}
 
 Question: {question}
@@ -40,5 +40,5 @@ rag_chain = (
     | StrOutputParser()
 )
 
-for chunk in rag_chain.stream("I am looking for a new haggadah for yom tov. Can you recommend one?"):
+for chunk in rag_chain.stream("Do you have the Rabbi kelmer's biography?"):
     print(chunk, end="", flush=True)
