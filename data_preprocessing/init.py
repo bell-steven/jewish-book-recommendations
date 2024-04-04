@@ -2,8 +2,6 @@ import json
 import csv
 from bs4 import BeautifulSoup
 
-# Simulated data loading from a file
-# Placeholder file path variable
 file_path = '../source_data/judaica_books.json'
 
 with open(file_path, 'r') as file:
@@ -64,12 +62,12 @@ for item in data:
         all_products.append(new_item)
 
 # Save the cleaned data to a JSON file
-cleaned_file_path = './cleaned_judaica_books.json'
+cleaned_file_path = './generated_files/cleaned_judaica_books.json'
 with open(cleaned_file_path, 'w') as file:
     json.dump(all_products, file)
 
 # Save the cleaned data to a CSV file
-cleaned_csv_file_path = './cleaned_judaica_books.csv'
+cleaned_csv_file_path = './generated_files/cleaned_judaica_books.csv'
 with open(cleaned_csv_file_path, 'w') as file:
     csv_writer = csv.writer(file)
     csv_writer.writerow(all_products[0].keys())
@@ -77,6 +75,6 @@ with open(cleaned_csv_file_path, 'w') as file:
         csv_writer.writerow(item.values())
 
 # sample file with only 3 items
-sample_file_path = './sample_judaica_books.json'
+sample_file_path = './generated_files/sample_judaica_books.json'
 with open(sample_file_path, 'w') as file:
     json.dump(all_products[:3], file)

@@ -43,7 +43,7 @@ def save_vectorstore(vectorstore, save_path, index_name):
 
 
 loader = JSONLoader(
-    file_path='./products.json',
+    file_path='./generated_files/products.json',
     jq_schema='.[]',
     content_key="expanded_description",
     metadata_func=metadata_func
@@ -54,4 +54,4 @@ if __name__ == "__main__":
     embeddings = OpenAIEmbeddings()
     vectorstore = create_vectorstore(documents, embeddings)
     save_vectorstore(
-        vectorstore, save_path="./book_vectorstore", index_name="products")
+        vectorstore, save_path="../book_vectorstore", index_name="products")

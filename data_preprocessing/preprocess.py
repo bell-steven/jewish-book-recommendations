@@ -45,7 +45,7 @@ product_df = pd.DataFrame(all_products)
 cleaned_df = df_preprocessing(product_df)
 
 
-cleaned_df.to_csv("products.csv", index=False)
+cleaned_df.to_csv("./generated_files/products.csv", index=False)
 cleaned_products_json = cleaned_df.to_json(orient="records")
-with open("products.json", "w") as f:
+with open("./generated_files/products.json", "w") as f:
     f.write(cleaned_products_json)
