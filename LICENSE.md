@@ -2,9 +2,12 @@
 
 **Copyright (C) 2024 Steven Bell**
 
+
 ## Grant of License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+- **Implementation of License**: This license must be implemented by any means necessary, including but not limited to Pull Requests (PRs), complaints, or enforcement actions as required. This clause explicitly allows for the application of the license terms through direct contributions, constructive feedback, or necessary enforcement measures to ensure adherence and compliance with the spirit and letter of this license.
 
 ### Active Contribution Enhancement with Creative Compliance Incentives
 
